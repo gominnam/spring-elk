@@ -1,10 +1,12 @@
 
 
 
-### csv file edit special characters 
+## 파일 수정
+- logstash 에서 csv 파일을 정확하게 파싱할 수있도록 파일 수정
+- python 코드를 사용하여 개행 특수문자 제거
 
-```
-# prompt: read csv named "input.csv", remove 3 special characters (newline, double quote, comma) within any data, and export to "output.csv"
+```python
+# prompt: 원본 csv 파일에서 개행 특수문자 제거
 
 from tqdm import tqdm
 import csv
