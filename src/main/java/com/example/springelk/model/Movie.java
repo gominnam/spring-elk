@@ -8,12 +8,12 @@ import org.springframework.data.elasticsearch.annotations.Document;
 public class Movie {
     @Id
     private String id;
-    private int releaseYear;
+    private int release_year;
     private String title;
-    private String originEthnicity;
+    private String origin;
     private String director;
     private String cast;
     private String genre;
-    private String wikiPage;
+    private String wiki_page;
     private String plot;
 }
