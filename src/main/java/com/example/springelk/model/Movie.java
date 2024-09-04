@@ -16,4 +16,5 @@ public class Movie {
     private String genre;
     private String wiki_page;
     private String plot;
+    private String poster_image_url;
 }

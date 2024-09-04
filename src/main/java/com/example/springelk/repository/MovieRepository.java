@@ -9,7 +9,7 @@ import java.util.List;
 public interface MovieRepository extends ElasticsearchRepository<Movie, String> {
     Iterable<Movie> findByTitle(String title);
 
-    @Query("{\"multi_match\": {\"query\": \"?0\", \"fields\": [\"title^2\", \"genre\", \"cast\"]}}")
+    @Query("{\"multi_match\": {\"query\": \"?0\", \"fields\": [\"title\", \"director\", \"genre\", \"cast\"]}}")
     List<Movie> searchByMultiMatch(String query);
 
 }

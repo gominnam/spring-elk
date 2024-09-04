@@ -1,6 +1,18 @@
 
 # ELK (Elasitcsearch, Logstash, Kibana) Stack
 
+## 목적
+
+- Netflix, Coupang Play 처럼 하나의 검색란에서 영화 제목, 감독, 장르, 배우를 검색하여 결과를 확인할 수 있는 검색 서비스 구현
+- ELK 스택을 사용하여 데이터를 저장하고 검색(Kaggle wiki movie plots 데이터 사용)
+
+
+## 고려사항
+
+- 
+
+
+
 ## 실행방법
 
 1. csv 파일 다운
