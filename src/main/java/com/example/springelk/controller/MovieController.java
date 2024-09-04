@@ -20,8 +20,8 @@ public class MovieController {
         return movieService.findByTitle(title);
     }
 
-    @GetMapping("/search")
-    public List<Movie> search(@RequestParam("query") String query) {
-        return movieService.findByCriteria(query);
+    @GetMapping("/multi-match-search")
+    public List<Movie> searchByMultiMatch(@RequestParam("query") String query) {
+        return movieService.searchByMultiMatch(query);
     }
 }
