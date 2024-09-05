@@ -46,6 +46,35 @@ with open('wiki_movie_plots_deduped.csv', 'r') as infile, open('output.csv', 'w'
 - 검색 조건 title, genre, actor
 
 
+## Trouble Shooting
+
+1. 1. **Endpoint POST /update-poster-images 요청 시 'all shards failed' 오류 발생**
+
+    - **Shard Health 확인**
+      ```bash
+      curl -X GET "http://localhost:9200/_cat/indices?v" | jq
+      ```
+        - 결과: yellow, green 상태로 문제 없음을 확인 (red 상태일 경우 문제 발생)
+
+    - **Mapping 확인**
+      ```bash
+      curl -X GET "http://localhost:9200/wiki_movies/_mapping" | jq
+      ```
+        - 결과: 새로 생성한 `post-image-url` 확인
+
+    - **해결 방법**
+      - elasticsearch 의 default max_result_window 값이 10000으로 설정되어 있어서, 10000개 이상의 데이터를 한번에 가져올 수 없음
+      - Paging을 이용하여 데이터를 가져오도록 수정
+      - ref : https://discuss.elastic.co/t/es-search-failed-search-phase-execution-exception-all-shards-failed/335428
+
+
+2. 2. ElasticSearch 대량 데이터 비효율
+
+    - **원인과 해결 방법**
+      - Q: NoSQL 기반 검색 엔진으로 문서를 수정하는게 아닌 삭제, 수정하는 방식으로 대량의 업데이트 경우 비용이 큰 문제발생
+      - A: Bulk API 사용(실시간 update 가 필요한 경우 용이)
+      
+
 ## References
 
 - [Kaggle Dataset](https://www.kaggle.com/datasets/jrobischon/wikipedia-movie-plots)
