@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Wiki 영화 검색</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>Wiki 영화 검색</h1>
+<form action="/movies/multi-match-search" method="get">
+  <input type="text" name="query" placeholder="제목, 장르, 배우로 검색해보세요" th:value="${query}">
+  <button type="submit">검색</button>
+</form>
+<div th:if="${movies}">
+  <h2>검색 결과</h2>
+  <div class="carousel-container">
+    <button class="nav-button left-button">Left</button>
+    <div class="movies-carousel">
+      <div class="movies-grid" id="movies-grid">
+        <div class="movie-item" th:each="movie : ${movies}">
+          <img th:src="${movie.posterImageUrl}" alt="Poster" class="movie-poster" data-movie-id="${movie.id}" />
+          <div class="movie-info hidden">
+            <span class="movie-title" th:text="${movie.title}"></span>
+            <span class="movie-plot" th:text="${movie.plot}"></span>
+            <span class="movie-genre" th:text="${movie.genre}"></span>
+            <span class="movie-cast" th:text="${movie.cast}"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="nav-button right-button">Right</button>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    const $carousel = $('#movies-grid');
+    const $items = $carousel.children();
+    const itemWidth = $items.outerWidth(true);
+    const visibleItems = 5;
+    let currentIndex = 0;
+
+    // Store movie data
+    const movieData = {};
+    $('.movie-item').each(function() {
+      const movieId = $(this).find('.movie-poster').data('movie-id');
+      movieData[movieId] = {
+        title: $(this).find('.movie-title').text(),
+        plot: $(this).find('.movie-plot').text(),
+        genre: $(this).find('.movie-genre').text(),
+        cast: $(this).find('.movie-cast').text(),
+        posterImageUrl: $(this).find('.movie-poster').attr('src')
+      };
+      console.log("movie data: ", movieData[movieId]);
+    });
+
+    function updateCarousel() {
+      const totalWidth = itemWidth * $items.length;
+      const visibleWidth = itemWidth * visibleItems;
+      $carousel.css('width', visibleWidth + 'px');
+      $carousel.parent().css('width', visibleWidth + 'px');
+      $carousel.css('transform', `translateX(${-currentIndex * itemWidth}px)`);
+    }
+
+    $('.left-button').click(function() {
+      currentIndex = (currentIndex - 1 + $items.length) % $items.length;
+      updateCarousel();
+    });
+
+    $('.right-button').click(function() {
+      currentIndex = (currentIndex + 1) % $items.length;
+      updateCarousel();
+    });
+
+    updateCarousel();
+
+    // Open new popup window with movie details
+    $('.movie-poster').click(function() {
+      const movieId = $(this).data('movie-id');
+      const movie = movieData[movieId];
+      const popup = window.open('/view/popup', 'Movie Details', 'width=600,height=400');
+      popup.onload = function() {
+        popup.document.getElementById('movieTitle').innerText = movie.title;
+        popup.document.getElementById('moviePlot').innerText = movie.plot;
+        popup.document.getElementById('movieGenre').innerText = movie.genre;
+        popup.document.getElementById('movieCast').innerText = movie.cast;
+        popup.document.getElementById('moviePoster').src = movie.posterImageUrl;
+      };
+    });
+  });
+</script>
+</body>
+</html>
