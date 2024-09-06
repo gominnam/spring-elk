@@ -1,6 +1,7 @@
 import csv
 import requests
 from bs4 import BeautifulSoup
+from concurrent.futures import ThreadPoolExecutor
 
 def get_poster_image_url(wiki_page_url):
   try:
@@ -33,18 +34,25 @@ except FileNotFoundError:
 with open(input_file, 'r', newline='', encoding='utf-8') as infile, \
      open(output_file, 'a', newline='', encoding='utf-8') as outfile:
   reader = csv.DictReader(infile)
-  fieldnames = reader.fieldnames + ['posterimageurl']
+  fieldnames = reader.fieldnames + ['Poster Image URL']
   writer = csv.DictWriter(outfile, fieldnames=fieldnames)
 
   if not existing_urls:
-        writer.writeheader()
+      writer.writeheader()
 
-  for row in reader:
-    wiki_page_url = row['Wiki Page']
-    if wiki_page_url in existing_urls:
-      continue
+  def process_row(row):
+      wiki_page_url = row['Wiki Page']
+      if wiki_page_url in existing_urls:
+          return None  # 이미 처리된 경우 건너뜀
+      poster_image_url = get_poster_image_url(wiki_page_url)
+      row['Poster Image URL'] = poster_image_url
+      return row
 
-    poster_image_url = get_poster_image_url(wiki_page_url)
-    row['posterimageurl'] = poster_image_url
+  # 병렬로 작업 처리
+  with ThreadPoolExecutor(max_workers=10) as executor:
+      results = list(executor.map(process_row, reader))
 
-    writer.writerow(row)
+  # 결과 저장
+  for row in results:
+      if row:
+          writer.writerow(row)
