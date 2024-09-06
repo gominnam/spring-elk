@@ -12,7 +12,7 @@ public interface MovieRepository extends ElasticsearchRepository<Movie, String> 
     Iterable<Movie> findByTitle(String title);
 
     @Query("{\"multi_match\": {\"query\": \"?0\", \"fields\": [\"title\", \"director\", \"genre\", \"cast\"]}}")
-    List<Movie> searchByMultiMatch(String query);
+    List<Movie> searchByMultiMatch(String query, Pageable pageable);
 
     @Query("{\"term\": {\"poster_image_url.keyword\": \"null\"}}")
     Page<Movie> findByPosterImageUrlIsNull(Pageable pageable);

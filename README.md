@@ -4,13 +4,8 @@
 ## 목적
 
 - Netflix, Coupang Play 처럼 하나의 검색란에서 영화 제목, 감독, 장르, 배우를 검색하여 결과를 확인할 수 있는 검색 서비스 구현
-- ELK 스택을 사용하여 데이터를 저장하고 검색(Kaggle wiki movie plots 데이터 사용)
-
-
-## 고려사항
-
-- 
-
+- ELK 스택을 사용하여 효율적인 검색기능 구현
+- 빅데이터를 원하는 데이터로 수정 후 저장(Kaggle wiki movie plots 데이터 사용)
 
 
 ## 실행방법
@@ -41,6 +36,8 @@ with open('wiki_movie_plots_deduped.csv', 'r') as infile, open('output.csv', 'w'
     
 ```
 
+- poster_image_url 데이터 크롤링하여 추가
+  - python source code 참조 (src/main/python/insert_poster_image.py)
 
 ## Custom Scoring
 - 검색 조건 title, genre, actor
@@ -68,12 +65,18 @@ with open('wiki_movie_plots_deduped.csv', 'r') as infile, open('output.csv', 'w'
       - ref : https://discuss.elastic.co/t/es-search-failed-search-phase-execution-exception-all-shards-failed/335428
 
 
-2. 2. ElasticSearch 대량 데이터 비효율
+2. 2. ElasticSearch 대량 데이터 비효율 문제
 
     - **원인과 해결 방법**
       - Q: NoSQL 기반 검색 엔진으로 문서를 수정하는게 아닌 삭제, 수정하는 방식으로 대량의 업데이트 경우 비용이 큰 문제발생
-      - A: Bulk API 사용(실시간 update 가 필요한 경우 용이)
-      
+      - A1: Bulk API 사용(실시간 update 가 필요한 경우 용이)
+      - A2: poster_image_url 데이터 크롤링하여 CSV 파일을 수정 
+
+
+[//]: # (memo
+- 개봉일자가 최근일수록 score 미미하게 좀 더 점수를 부가 ??
+- 한글 번역하여[papago api] search // 실제 서비스라면 한글 index도 생성하여 검색하는게 좋겠다.
+)
 
 ## References
 

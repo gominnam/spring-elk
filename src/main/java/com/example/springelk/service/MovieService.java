@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MovieService {
@@ -29,7 +30,8 @@ public class MovieService {
     }
 
     public List<Movie> searchByMultiMatch(String query) {
-        return movieRepository.searchByMultiMatch(query);
+        PageRequest pageable = PageRequest.of(0, 10);
+        return movieRepository.searchByMultiMatch(query, pageable);
     }
 
     @Transactional
