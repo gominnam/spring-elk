@@ -42,17 +42,22 @@ button {
 }
 
 .nav-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: #e50914;
     color: #fff;
     border: none;
     border-radius: 50%;
-    width: 40px;
+    width: 60px;
     height: 40px;
     cursor: pointer;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 1;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .left-button {
