@@ -1,0 +1,5 @@
+# 파이프라인 설정
+pipeline.workers: 4 # worker thread 수
+
+# 로그 설정
+log.level: info
