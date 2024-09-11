@@ -41,21 +41,18 @@
     let currentIndex = 0;
 
     // Store movie data
-    const movieData = {};
     $('.movie-item').each(function() {
-      const movieId = $(this).find('.movie-poster').data('movie-id');
-      movieData[movieId] = {
+      const movie = {
         title: $(this).find('.movie-title').text(),
         plot: $(this).find('.movie-plot').text(),
         genre: $(this).find('.movie-genre').text(),
         cast: $(this).find('.movie-cast').text(),
         posterImageUrl: $(this).find('.movie-poster').attr('src')
       };
-      console.log("movie data: ", movieData[movieId]);
+      $(this).find('.movie-poster').data('movie', movie);
     });
 
     function updateCarousel() {
-      const totalWidth = itemWidth * $items.length;
       const visibleWidth = itemWidth * visibleItems;
       $carousel.css('width', visibleWidth + 'px');
       $carousel.parent().css('width', visibleWidth + 'px');
@@ -76,9 +73,14 @@
 
     // Open new popup window with movie details
     $('.movie-poster').click(function() {
-      const movieId = $(this).data('movie-id');
-      const movie = movieData[movieId];
-      const popup = window.open('/view/popup', 'Movie Details', 'width=600,height=400');
+      const movie = $(this).data('movie');
+
+      if (!movie) {
+        console.error("Movie data not found for ID: " + movieId);
+        return;
+      }
+
+      const popup = window.open('/view/popup', 'Movie Details', 'width=700,height=500');
       popup.onload = function() {
         popup.document.getElementById('movieTitle').innerText = movie.title;
         popup.document.getElementById('moviePlot').innerText = movie.plot;
