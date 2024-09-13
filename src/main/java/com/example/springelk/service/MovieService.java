@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MovieService {
@@ -45,12 +44,9 @@ public class MovieService {
 
             moviesPage = movieRepository.findByPosterImageUrlIsNull(PageRequest.of(page, size));
             List<Movie> movies = moviesPage.getContent();
-            log.info("Query executed successfully, found {} movies", movies.size());
 
             for (Movie movie : movies) {
-                log.info("Fetching poster image url for movie: " + movie.getTitle());
                 String posterImageUrl = wikiCrawler.fetchPosterImageUrl(movie.getWikiPage());
-                log.info("Updating poster image url for movie: " + posterImageUrl);
                  if (posterImageUrl != null) {
                      movieRepository.updatePosterImageUrl(posterImageUrl, movie.getId());
 //                     movie.setPosterImageUrl(posterImageUrl);

@@ -10,6 +10,8 @@ services:
       - "9200:9200"
     volumes:
       - esdata:/usr/share/elasticsearch/data
+      - ./init-elasticsearch.sh:/usr/share/elasticsearch/init-index.sh
+    command: /bin/bash -c "/usr/share/elasticsearch/bin/elasticsearch & /usr/share/elasticsearch/init-elasticsearch.sh" # 스크립트 실행
     ulimits:
       memlock:
         soft: -1
