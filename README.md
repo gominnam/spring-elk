@@ -84,6 +84,8 @@ with open('wiki_movie_plots_deduped.csv', 'r') as infile, open('output.csv', 'w'
      2. Wikipedia의 영어 Title을 통해 Wikidata ID를 얻어 한글 Title 을 얻는 방식
         - 위 방법으로는 한글 Title이 없는 경우가 있었지만 대중적이지 않은 영화들로 한글 검색을 지원을 안하는 방향으로 결정(해결 방안을 추후 모색하기)
 
+
+세마포어 thread 5 50 프로 시간 단축(2hour 30minutes)
 ## References
 
 - [Kaggle Dataset](https://www.kaggle.com/datasets/jrobischon/wikipedia-movie-plots)
