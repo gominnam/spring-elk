@@ -24,6 +24,7 @@
             <span class="movie-plot" th:text="${movie.plot}"></span>
             <span class="movie-genre" th:text="${movie.genre}"></span>
             <span class="movie-cast" th:text="${movie.cast}"></span>
+            <span class="movie_director" th:text="${movie.director}"></span>
           </div>
         </div>
       </div>
@@ -47,6 +48,7 @@
         plot: $(this).find('.movie-plot').text(),
         genre: $(this).find('.movie-genre').text(),
         cast: $(this).find('.movie-cast').text(),
+        director: $(this).find('.movie_director').text(),
         posterImageUrl: $(this).find('.movie-poster').attr('src')
       };
       $(this).find('.movie-poster').data('movie', movie);
@@ -86,6 +88,7 @@
         popup.document.getElementById('moviePlot').innerText = movie.plot;
         popup.document.getElementById('movieGenre').innerText = movie.genre;
         popup.document.getElementById('movieCast').innerText = movie.cast;
+        popup.document.getElementById('movieDirector').innerText = movie.director;
         popup.document.getElementById('moviePoster').src = movie.posterImageUrl;
       };
     });
