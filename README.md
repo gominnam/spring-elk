@@ -39,13 +39,13 @@ with open('wiki_movie_plots_deduped.csv', 'r') as infile, open('output.csv', 'w'
 
 2. 포스터 이미지 링크 추가
 - poster_image_url 데이터 크롤링하여 추가
-  - python source code 참조 (src/main/python/insert_poster_image.py)
+  - python source code 참조 (src/main/resources/crawling_image_poster.py)
 
 3. 한국어로 검색할 수 있도록 데이터 추가
-- 
+- 영어 Title을 통해 Wikidata ID를 얻어 한글 데이터를 얻는 방식 (src/main/resources/update_csv_with_korean_titles.py) 
 
 ## Custom Scoring
-- 검색 조건 title, genre, actor
+- 검색 조건: title, genre, director, cast
 
 
 ## Trouble Shooting
@@ -62,14 +62,15 @@ with open('wiki_movie_plots_deduped.csv', 'r') as infile, open('output.csv', 'w'
       ```bash
       curl -X GET "http://localhost:9200/wiki_movies/_mapping" | jq
       ```
-        - 결과: 새로 생성한 `post-image-url` 확인
+        - 결과: 새로 생성한 `post-image-url` 매핑 확인
 
     - **해결 방법**
-      - elasticsearch 의 default max_result_window 값이 10000으로 설정되어 있어서, 10000개 이상의 데이터를 한번에 가져올 수 없음
+      - elasticsearch 의 default max_result_window 값이 10000으로 설정되어 있어서, 10000개 이상의 데이터를 한번에 가져오면서 문제 발생
       - Paging을 이용하여 데이터를 가져오도록 수정
       - ref : https://discuss.elastic.co/t/es-search-failed-search-phase-execution-exception-all-shards-failed/335428
 
-1. 2. ElasticSearch 대량 데이터 비효율 문제
+</br></br>
+2. 1. **ElasticSearch 대량 데이터 비효율 문제**
 
     - **원인과 해결 방법**
       - Q: NoSQL 기반 검색 엔진으로 문서를 수정하는게 아닌 삭제, 수정하는 방식으로 대량의 업데이트 경우 비용이 큰 문제발생
@@ -78,16 +79,35 @@ with open('wiki_movie_plots_deduped.csv', 'r') as infile, open('output.csv', 'w'
 
 
 </br></br>
-2. 1. **한글 검색으로도 조회할 수 있도록 데이터 추가 과정 문제**
+3. 1. **한글 검색으로도 조회할 수 있도록 데이터 추가 과정과 문제해결**
    - **원인**
      1. papago(api 서비스 중단)나 google 번역기를 사용하려 했지만 영어 Title 과 한글 Title 이 번역과 불일치로 인해 사용 불가
-     2. Wikipedia의 영어 Title을 통해 Wikidata ID를 얻어 한글 Title 을 얻는 방식
-        - 위 방법으로는 한글 Title이 없는 경우가 있었지만 대중적이지 않은 영화들로 한글 검색을 지원을 안하는 방향으로 결정(해결 방안을 추후 모색하기)
+     2. Wikipedia의 API를 이용하기
+        - 영어 Title을 통해 Wikidata ID를 얻어 한글 데이터를 얻는 방식
+        - 위 방법으로는 한글 Title 이 없는 경우 존재, 대부분 대중적이지 않은 영화들로 이런 경우는 한글 검색을 지원을 안하는 방향으로 결정
+        - Wipipredia API 호출로 인한 단점(요청 제한(code: 429)으로 인해 속도 문제)
+          - 비용적인 측면이 더 중요하므로 속도 일부 포기
+</br></br>
+3. 2. **Elasticsearch 부분검색(n-gram) 기능 추가**
+   - **원인**
+     1. n-gram tokenizer 설정을 logstash 에서 csv 파일을 읽기 전에 설정하지 않아서 문제 발생
+        - docker-compose.yml 에서 init-elasticsearch.sh 파일을 먼저 실행하도록 수정(./init-elasticsearch.sh)
+          - sh 파일에서 n-gram index 생성 후 종류 문제 (tail -f /dev/null를 사용하여 프로세스 유지)
+        - docker-compose.yml 에서 elasticsearch 컨테이너 설정이 완료된 후 logstash, kibana 실행 순서 문제
+          - elasticsearch 의 healthcheck를 이용하여 logstash, kibana 실행 순서 보장
+          - logstash, kibana 는 depends_on 설정으로 elasticsearch 컨테이너가 실행된 후 실행되도록 설정(condition: service_healthy) 
 
 
-세마포어 thread 5 50 프로 시간 단축(2hour 30minutes)
+## UI
+
+1. **검색 화면**
+   - 검색창에 검색어 입력 후 검색 버튼 클릭
+   - 검색 결과가 나타남
+   - 검색 결과를 클릭하면 상세 정보 확인 가능
+
 ## References
 
 - [Kaggle Dataset](https://www.kaggle.com/datasets/jrobischon/wikipedia-movie-plots)
 - [Elasticsearch Srping](https://spring.io/projects/spring-data-elasticsearch)
 - [Elasticsearch Guild](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html)
+- [Elasticsearch n-gram](https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-ngram-tokenfilter.html)
