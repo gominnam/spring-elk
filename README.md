@@ -98,6 +98,18 @@ with open('wiki_movie_plots_deduped.csv', 'r') as infile, open('output.csv', 'w'
           - logstash, kibana 는 depends_on 설정으로 elasticsearch 컨테이너가 실행된 후 실행되도록 설정(condition: service_healthy) 
 
 
+## 기능 추가 및 성능 최적화
+
+1. **검색 기능 확장과 최적화 설정**
+   1. n-gram tokenizer 설정
+      - 부분검색 기능 추가하여 원하는 검색 결과 도출(부분 검색, 오타 검색)
+      - n-gram tokenizer 설정을 통해 검색어를 입력하면 해당 검색어가 포함된 결과를 반환
+
+    2. edge-ngram tokenizer 설정
+      - 텍스트의 시작 부분에서만 토큰을 생성하여 토큰 인덱스 크기 축소
+      - 검색어의 시작 부분만 일치하는 결과를 반환(검색 시 리소스 소모 절약)
+    
+
 ## UI
 
 1. **검색 화면**
