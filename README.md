@@ -1,24 +1,28 @@
 
-# ELK (Elasitcsearch, Logstash, Kibana) Stack
-
-## 목적
-
-- Netflix, Coupang Play 처럼 하나의 검색란에서 영화 제목, 감독, 장르, 배우를 검색하여 결과를 확인할 수 있는 검색 서비스 구현
-- ELK 스택을 사용하여 효율적인 검색기능 구현
-- 빅데이터를 원하는 데이터로 수정 후 저장(Kaggle wiki movie plots 데이터 사용)
+# 시작하기
 
 
-## 실행방법
+## 1. 프로젝트 목적
+이 프로젝트는 Netflix, Coupang Play 처럼 하나의 검색란에서 영화 제목, 감독, 장르, 배우를 검색하여 결과를 확인할 수 있는 검색 서비스 구현합니다.
+주요 기능과 기술을 다음과 같습니다:</br>
+
+- **대규모 데이터 검색 서비스 구현**: ELK 스택을 사용하여 대규모 데이터 검색 서비스 구현 (Elasticsearch, Logstash, Kibana)
+- **데이터 전처리**: 데이터를 전처리하여 ElasticSearch에 저장합니다.
+- **검색 기능**: 검색어를 입력하면 해당 검색어가 포함된 결과를 반환합니다.
+</br></br>
+
+## 2. 실행방법
 
 1. csv 파일 다운
 2. docker-compose (elasticsearch, logstash, kibana) 실행
-```angular2html
+
+```bash
 // 처음 실행할 경우 logstash 컨테이너에서 csv 파일을 파싱하고 elasticsearch에 저장
 docker-compose up -d
 ```
+</br></br>
 
-## Data
-파일 수정 및 파싱
+## 3. 데이터 전처리
 
 1. 개행 특수 문자 제거
 - logstash 에서 csv 파일을 정확하게 파싱할 수있도록 파일 수정
@@ -44,11 +48,16 @@ with open('wiki_movie_plots_deduped.csv', 'r') as infile, open('output.csv', 'w'
 3. 한국어로 검색할 수 있도록 데이터 추가
 - 영어 Title을 통해 Wikidata ID를 얻어 한글 데이터를 얻는 방식 (src/main/resources/update_csv_with_korean_titles.py) 
 
-## Custom Scoring
+</br></br>
+
+
+## 4. Custom Scoring
 - 검색 조건: title, genre, director, cast
 
+</br></br>
 
-## Trouble Shooting
+
+## 5. Trouble Shooting
 
 1. 1. **Endpoint POST /update-poster-images 요청 시 'all shards failed' 오류 발생**
 
@@ -98,7 +107,7 @@ with open('wiki_movie_plots_deduped.csv', 'r') as infile, open('output.csv', 'w'
           - logstash, kibana 는 depends_on 설정으로 elasticsearch 컨테이너가 실행된 후 실행되도록 설정(condition: service_healthy) 
 
 
-## 기능 추가 및 성능 최적화
+## 6. 기능 추가 및 성능 최적화
 
 1. **검색 기능 확장과 최적화 설정**
    1. n-gram tokenizer 설정
@@ -108,16 +117,33 @@ with open('wiki_movie_plots_deduped.csv', 'r') as infile, open('output.csv', 'w'
     2. edge-ngram tokenizer 설정
       - 텍스트의 시작 부분에서만 토큰을 생성하여 토큰 인덱스 크기 축소
       - 검색어의 시작 부분만 일치하는 결과를 반환(검색 시 리소스 소모 절약)
-    
 
-## UI
+</br></br>
 
-1. **검색 화면**
-   - 검색창에 검색어 입력 후 검색 버튼 클릭
-   - 검색 결과가 나타남
-   - 검색 결과를 클릭하면 상세 정보 확인 가능
 
-## References
+## 7. UI
+
+1. **메인 화면**
+
+<img src="./src/main/resources/static/images/readme/home.png" alt="home" style="zoom:50%;" />
+
+
+2. **검색 결과 화면**
+
+<img src="./src/main/resources/static/images/readme/search-result.png" alt="search_result" style="zoom:50%;" />
+
+3. **검색 결과 상세 화면**
+
+<img src="./src/main/resources/static/images/readme/movie-detail-page.png" alt="search_detail" style="zoom:50%;" />
+
+
+4. **Kibana 화면**
+- Index Management
+
+<img src="./src/main/resources/static/images/readme/kibana-index-management.png" alt="kibana-index-management" style="zoom:50%;" />
+
+
+## Reference
 
 - [Kaggle Dataset](https://www.kaggle.com/datasets/jrobischon/wikipedia-movie-plots)
 - [Elasticsearch Srping](https://spring.io/projects/spring-data-elasticsearch)
